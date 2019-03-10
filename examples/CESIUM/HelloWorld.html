@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<!-- Use correct character set. -->
+		<meta charset="utf-8">
+		<!-- Tell IE to use the latest, best version. -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+		<title>3D即時災害展示系統</title>
+		<script src="../Build/Cesium/Cesium.js"></script>
+		<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../style.css">
+	</head>
+
+	<body>
+		<div id="cesiumContainer" class="fullSize"></div>
+		<div class="col-sm-3 col-md-3" style="z-index: 0; position: absolute; cursor: pointer; left: 0px; top: 0px; margin-top: 15px;">
+			<div class="mini-submenu" style="background: white;">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</div>
+			<div class="panel-group list-group" id="accordion">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"><!--<span class="glyphicon glyphicon-folder-close">-->
+                </span>災種篩選</a>
+                <span class="pull-right" id="slide-submenu">
+	                <i class="fa fa-times"></i>
+	            	</span>
+            </h4>
+					</div>
+					<div id="collapseOne" class="panel-collapse collapse in">
+						<div class="panel-body">
+							<table class="table">
+								<tr>
+									<td style="width: 50%;text-align: center;" onclick="disasterSpeciesValue('all')">
+										<a href="#">全部</a>
+									</td>
+									<td style="width: 50%;text-align: center;" onclick="disasterSpeciesValue('淹水')">
+										<a href="#">淹水</a>
+									</td>
+								</tr>
+								<tr>
+									<td style="width: 50%;text-align: center;" onclick="disasterSpeciesValue('土石流')">
+										<a href="#">土石流</a>
+									</td>
+									<td style="width: 50%;text-align: center;" onclick="disasterSpeciesValue('海水倒灌')">
+										<a href="#">海水倒灌</a>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><!--<span class="glyphicon glyphicon-th">-->
+                </span>資源圖層</a>
+            </h4>
+					</div>
+					<div id="collapseTwo" class="panel-collapse collapse">
+						<div class="panel-body">
+							<table class="table">
+								<tr>
+									<td style="vertical-align: middle;text-align: center;font-size: large;">
+										<p>分佈圖</p>
+									</td>
+									<td>
+										<label class="switch">
+										  <input type="checkbox" checked id="distributionSwitch">
+										  <span class="slider round"></span>
+										</label>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"><!--<span class="glyphicon glyphicon-user">-->
+                </span>地圖工具</a>
+            </h4>
+					</div>
+					<div id="collapseThree" class="panel-collapse collapse">
+						<div style="text-align: center;">
+							區域切換
+						</div>
+						<div class="panel-body">
+							<button onclick="locate(25.0329694, 121.5654177)">台北市</button>
+							<button onclick="locate(25.0169826, 121.4627868)">新北市</button>
+							<button onclick="locate(24.9936281, 121.3009798)">桃園市</button>
+							<button onclick="locate(24.1477358, 120.6736482)">台中市</button>
+							<button onclick="locate(22.9997281, 120.2270277)">台南市</button>
+							<button onclick="locate(22.6272784, 120.3014353)">高雄市</button>
+						</div>
+						<div class="panel-body">
+							<table class="table">
+								<tr>
+									<td>
+										<a type="button" class="btn btn-info btn-lg" href="../try.html" target="_blank">2D地圖</a>
+									</td>
+								</tr>
+								<div class="slidecontainer" style="text-align: center;">
+									<p>時間軸</p>
+									<input type="range" min="0" max="2" value="0" id="dateSlider">
+									<p>日期: <span id="demo">2015年</span></p>
+								</div>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"><!--<span class="glyphicon glyphicon-file">-->
+                </span>資源連結</a>
+            </h4>
+					</div>
+					<div id="collapseFour" class="panel-collapse collapse">
+						<div class="panel-body">
+							<table class="table">
+								<tr>
+									<td>
+										<a href="https://www.windy.com" target="_blank">Windyty</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<a href="https://dmap.ncdr.nat.gov.tw/%E4%B8%BB%E9%81%B8%E5%96%AE/%E5%9C%B0%E5%9C%96%E6%9F%A5%E8%A9%A2/gis%E6%9F%A5%E8%A9%A2/" target="_blank">國家災害防救科技中心</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<a href="https://airmap.g0v.asper.tw/" target="_blank">零時空汙觀測網</a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<a href="http://1968.freeway.gov.tw/" target="_blank">高速公路局即時路況圖</a>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../jquery-3.0.0.min.js"></script>
+	<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+	<script src="//cdn.jsdelivr.net/d3js/3.5.17/d3.min.js" charset="utf-8"></script>
+	<script src="cesiumMapShow.js"></script>
+
+</html>
